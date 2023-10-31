@@ -1,0 +1,334 @@
+
+class OgmaDomElement {
+    _id: string;
+    _element: HTMLElement;
+
+    constructor(id) {
+        this._id = id;
+        this._element = document.getElementById(this._id);
+    }
+
+    get element(): HTMLElement {
+        return this._element;
+    }
+
+    get id(): string {
+        return this._id;
+    }
+
+    get domElement(): HTMLElement {
+        return this._element;
+    }
+
+    get display(): string {
+        return this._element.style.display;
+    }
+
+    set display(value: string) {
+        this._element.style.display = value;
+    }
+}
+
+class OgmaDomList extends OgmaDomElement {
+    _listItems: ArrayList<HTMLElement>;
+    _elements: ArrayList<HTMLElement>;
+
+    constructor(id: string) {
+        super(id);
+        this._elements = new ArrayList<HTMLElement>();
+        this._listItems = new ArrayList<HTMLElement>();
+    }
+
+    add(e: HTMLElement):void {
+        let newChild: HTMLElement = document.createElement("li");
+
+        newChild.style.margin = "16px 0";
+
+        this._listItems.add(newChild);
+        this._elements.add(e);
+
+        newChild.appendChild<HTMLElement>(e);
+        this._element.appendChild<HTMLElement>(newChild);
+    }
+
+    remove(e: HTMLElement): void {
+        let index: number = this._elements.toArray().indexOf(e);
+
+        if (index == -1) return;
+
+        let li: HTMLElement = this._listItems.get(index);
+
+        this._element.removeChild<HTMLElement>(li);
+        this._elements.remove(e);
+        this._listItems.remove(li);
+    }
+}
+
+class OgmaDomTable extends OgmaDomElement {
+    _rowElements: ArrayList<HTMLElement>;
+    _rowDataItems: ArrayList<HTMLElement>;
+    _elements: ArrayList<HTMLElement>;
+    _columnCount: number;
+    _rowCount: number;
+    _elementCount: number;
+
+    constructor(id: string, columnCount: number) {
+        super(id);
+        this._elements = new ArrayList<HTMLElement>();
+        this._rowElements = new ArrayList<HTMLElement>();
+        this._rowDataItems = new ArrayList<HTMLElement>();
+        this._columnCount = columnCount;
+        this._rowCount = 0;
+        this._elementCount = 0;
+    }
+    
+    public addBlankRow(): void {
+        let newRow: HTMLElement = document.createElement("tr");
+        let newDataItem: HTMLElement;
+
+        newRow.style.padding = "6px";
+
+        this._rowElements.add(newRow);
+
+        for (let i: number = 0; i < this._columnCount; i++) {
+            newDataItem = document.createElement("td");
+            this._rowDataItems.add(newDataItem);
+            newRow.appendChild(newDataItem);
+        }
+
+        this._element.appendChild<HTMLElement>(newRow);
+
+        this._rowCount += 1;
+    }
+
+    add(e: HTMLElement):void {
+        let insertionIndex: number = this._elements.size();
+        let rowIndex: number = insertionIndex / this._columnCount;
+        let colIndex: number = insertionIndex % this._columnCount;
+
+        if (rowIndex == this._rowCount) {
+            this.addBlankRow();
+        }
+
+        let dataItem: HTMLElement = this._rowDataItems.get(insertionIndex);
+
+        dataItem.style.margin = "16px 0";
+
+        this._elements.add(e);
+        dataItem.appendChild<HTMLElement>(e);
+
+        this._elementCount += 1;
+    }
+
+    remove(e: HTMLElement): void {
+        // Implement me!
+        // It will be necessary to reconstruct the table after each deletion.
+    }
+
+    get rowCount(): number {
+        return this._rowCount;
+    }
+
+    get firstElement(): HTMLElement {
+        if (this._elements.size() == 0) return null
+        return this._elements.get(0);
+    }
+
+    get lastElement(): HTMLElement {
+        if (this._elements.size() == 0) return null;
+        return this._elements.get(this._elementCount - 1);
+        // return this._elements.get(this._elements.size() - 1);
+    }
+}
+
+class OgmaDomTabbedTable extends OgmaDomTable {
+    protected _buttonsDiv: HTMLDivElement;
+    protected _tabs: ArrayList<HTMLButtonElement>;
+    protected _tables: ArrayList<OgmaDomTable>;
+    protected _tableIDs: ArrayList<string>;
+    protected _maxRows: number;
+    protected _lastElementAdded: HTMLElement;
+
+    constructor(id: string, columnCount: number, rowCount: number) {
+        super(id, columnCount);
+        this._maxRows = rowCount;
+        this._tabs = new ArrayList<HTMLButtonElement>();
+        this._tables = new ArrayList<OgmaDomTable>();
+        this._tableIDs = new ArrayList<string>();
+        this.createHTML();
+    }
+
+    protected createHTML(): void {
+        this._buttonsDiv = document.createElement("div");
+        this._element.appendChild(this._buttonsDiv);
+
+        let firstTab: HTMLButtonElement = document.createElement("button");
+        let firstTable: HTMLTableElement = document.createElement("table");
+
+        firstTable.style.borderSpacing = "0 15px";
+
+        let firstTableDiv: HTMLDivElement = document.createElement("div");
+        let firstTableID: string = this.createTabID();
+        let firstTableDivID: string = firstTableID + "_tabDiv";
+
+        firstTab.className = "tablinks";
+        firstTableDiv.id = firstTableDivID;
+        firstTableDiv.className = "tabcontent";
+
+        firstTableDiv.appendChild(firstTable);
+
+        firstTable.id = firstTableID;
+        this._element.appendChild(firstTableDiv);
+        this._tables.add(new OgmaDomTable(firstTableID, this._columnCount));
+        this._tabs.add(firstTab);
+        this._buttonsDiv.appendChild(firstTab);
+        firstTab.innerText = "";
+        // @ts-ignore
+        firstTab.onclick = function (evt) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(firstTableDivID).style.display = "block";
+            // @ts-ignore
+            evt.currentTarget.className += " active";
+        };
+
+        firstTab.click();
+    }
+
+    protected createTabID(): string {
+        let newID: string = this._id + "_tab_" + this._tabs.size();
+        this._tableIDs.add(newID);
+        return newID;
+    }
+
+    nextInsertionIndices(): Object {
+        let count: number = this._elements.size();
+        let result: any = new Object();
+
+        result["tabIndex"] = Math.floor(count / (this._columnCount * this._maxRows));
+        result["rowIndex"] = count % Math.floor((this._columnCount * this._maxRows) / this._columnCount);
+        result["colIndex"] = count % (this._columnCount * this._maxRows) % this._columnCount;
+
+        return result;
+    }
+
+    public addBlankRow(): void {
+        let tableCount: number = this._tables.size();
+        let lastTable: OgmaDomTable = this._tables.get(tableCount - 1);
+
+        console.log("addBlankRow(): tableCount=" + tableCount + ", this._maxRows=" + this._maxRows + ", lastTable.rowCount=" + lastTable.rowCount);
+
+        if (lastTable.rowCount + 1 >= this._maxRows) {
+            let newTab: HTMLButtonElement = document.createElement("button");
+            let newTable: HTMLTableElement = document.createElement("table");
+
+            newTable.style.borderSpacing = "0 15px";
+
+            let newTableDiv: HTMLDivElement = document.createElement("div");
+            let newTableID: string = this.createTabID();
+            let newTableDivID: string = newTableID + "_tabDiv";
+
+            newTab.className = "tablinks";
+            newTableDiv.id = newTableDivID;
+            newTableDiv.className = "tabcontent";
+
+            newTableDiv.appendChild(newTable);
+
+            newTable.id = newTableID;
+            this._element.appendChild(newTableDiv);
+            this._tables.add(new OgmaDomTable(newTableID, this._columnCount));
+            this._tabs.add(newTab);
+            this._buttonsDiv.appendChild(newTab);
+            newTab.innerText = "";
+            // @ts-ignore
+            newTab.onclick = function (evt) {
+                // Declare all variables
+                var i, tabcontent, tablinks;
+
+                // Get all elements with class="tabcontent" and hide them
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+
+                // Get all elements with class="tablinks" and remove the class "active"
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+
+                // Show the current tab, and add an "active" class to the button that opened the tab
+                document.getElementById(newTableDivID).style.display = "block";
+                // @ts-ignore
+                evt.currentTarget.className += " active";
+            };
+
+            this._tables.get(tableCount).addBlankRow();
+        } else {
+            this._tables.get(tableCount - 1).addBlankRow();
+        }
+    }
+
+    private updateTab(): void {
+        let insertionIndices: any = this.nextInsertionIndices();
+        let tabIndex: number = insertionIndices.tabIndex;
+        let rowIndex: number = insertionIndices.rowIndex;
+        let colIndex: number = insertionIndices.colIndex;
+        let currentTable: OgmaDomTable = this._tables.get(tabIndex);
+        let tabText: string = null;
+        let firstElementOfCurrentTable: HTMLElement = currentTable.firstElement;
+        let lastElementOfCurrentTable: HTMLElement = currentTable.lastElement;
+
+        if (firstElementOfCurrentTable === null) {
+            tabText = "<empty>";
+        } else {
+            tabText = firstElementOfCurrentTable.textContent + " → ";
+        }
+        /*
+        if (firstElementOfCurrentTable === lastElementOfCurrentTable) {
+            if (lastElementOfCurrentTable === null) {
+                tabText = "<empty>";
+            } else {
+                tabText = lastElementOfCurrentTable.textContent;
+            }
+        } else {
+            tabText = firstElementOfCurrentTable.textContent + " → " + lastElementOfCurrentTable.textContent;
+        }
+        */
+        this._tabs.get(tabIndex).innerText = tabText;
+    }
+
+    add(e: HTMLElement):void {
+        let insertionIndices: any = this.nextInsertionIndices();
+        let tabIndex: number = insertionIndices.tabIndex;
+        let rowIndex: number = insertionIndices.rowIndex;
+        // let colIndex: number = insertionIndices.colIndex;
+
+        this._lastElementAdded = e;
+
+        if (rowIndex + 1 == this._maxRows) {
+            this.addBlankRow();
+        }
+
+        let currentTable: OgmaDomTable = this._tables.get(tabIndex);
+
+        currentTable.add(e);
+        this._elements.add(e);
+
+        this.updateTab();
+    }
+}
