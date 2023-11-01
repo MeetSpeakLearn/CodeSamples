@@ -1,0 +1,7 @@
+November 1, 2023
+
+Having noticed that many prospective clients and/or employers wish to see code samples, I found myself in a dilemma. All of the work I have done over past decades is subject to NDAs. Those NDAs preclude 1) sharing my code without the client or employer's permission and 2) retaining the code beyond the end of the contract or employment. Consequently, I cannot share any of the hundreds of thousands of lines of code I have written for others. I have also tutored hundreds of students in programming and the work we produced together is not exclusively mine. Moreover, putting such code online might have implications for the students have mentored.
+
+Yesterday, I began searching for code I have written simply out of my own interest. As I find samples of my code on my many portable hard-drives, I will upload them to this repository. None of the code in this repository was written or has even been owned by anyone but myself. Currently, I have only uploaded samples of TypeScript, Python, and Java programs I have written. As I find additional samples of my code, I will be uploading programs written in C++, C#, Lisp, Prolog, Basic, Ruby, and, if I can find it, FORTH.
+
+Sincerely, Steve Devoy
