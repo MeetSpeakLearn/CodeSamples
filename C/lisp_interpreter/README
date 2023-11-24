@@ -1,0 +1,15 @@
+This is a personal project in progress. This project started on November 1, 2023.
+I spend about 30 minutes per day working on it.
+
+All of the code is in a single file. Yes, it will be broken into header and source files when I refactor it,
+but as this is a personal project with no collaborators and with no intention of applying it to any project,
+I am keeping all of the code in a single file until I hit my first milestone: getting it work. Until then,
+I expect many radical changes, as it is exploratory. Rather than refactor, over and over, I've decided to
+keep it all together until that point in time.
+
+The goal is to create a simple Lisp Interpreter in C as a means to study various concepts in practice, such as
+garbage collectors, LISP architecture, etc.
+
+I chose the C language simply to display my C skills. The project would be easier to carry out in C++ and very
+easy to carry out in C#, Java, Python, or another high level object oriented language with garbage collection.
+However, that would obscure exactly what I am exploring.
