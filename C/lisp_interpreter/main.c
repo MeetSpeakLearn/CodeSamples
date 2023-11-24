@@ -1050,6 +1050,7 @@ void release_memory_of_size(void* memory, int size) {
     value->tag.iscons = 0;
 
     add_to_linked_list(selected->available, memory);
+}
 
 void test_memory_pools() {
     cons* some_cons_1 = 0;
@@ -1097,8 +1098,6 @@ void test_memory_pools() {
     }
 }
 
-}
-
 // Lisp Internals
 
 typedef struct binding_struct {
@@ -1136,11 +1135,11 @@ struct symbol_table_node_struct {
     symbol_table_node* greater;
 };
 
-struct symbol_package_struct {
+typedef struct symbol_package_struct {
     symbol_package *parent;
     char* package_name;
     symbol_table_node* root;
-};
+} symbol_package;
 
 void output_tabs(FILE* output, int count) {
     for (int i = 0; i < count; i++) fprintf(output, "\t");
