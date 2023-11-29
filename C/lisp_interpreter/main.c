@@ -75,6 +75,44 @@ void free_linked_list(linked_list* ll) {
     }
 }
 
+void free_linked_list_2(linked_list* ll, void (*f)(void*)) { // The second parameter receives a pointer to the content. It should free the content.
+    if (ll == 0) return;
+    if (ll->count == 0) return;
+
+    ll_node* current = ll->head;
+    ll_node* next = 0;
+
+    ll->current = ll->head = ll->tail = 0;
+
+    while (current != 0) {
+        next = current->next;
+        (*f)(current->content);
+        current->content = 0;
+        free(current);
+        current = next;
+    }
+}
+
+void push_onto_linked_list(linked_list* ll, void* content) {
+    ll_node* node = 0;
+    void* item = 0;
+
+    if (ll == 0) return;
+
+    if (ll->count == 0) {
+        ll->head = ll->tail = (ll_node *) malloc(sizeof(ll_node));
+        ll->head->content = content;
+        ll->head->next = 0;
+    } else {
+        node = (ll_node *) malloc(sizeof(ll_node));
+        node->content = content;
+        node->next = ll->head;
+        ll->head = node;
+    }
+
+    ll->count += 1;
+}
+
 void* pop_from_linked_list(linked_list* ll) {
     ll_node* node = 0;
     void* item = 0;
@@ -589,7 +627,7 @@ char* get_next_token_from_text(char* text_buffer, lisp_token** token) {
             return current + 1;
         } else if (*current == '"') {
             for (strptr = current + 1; ((! escaped) && (*strptr != '"')); strptr++)
-                escaped = (*strptr == '\''); //!!!
+                escaped = (*strptr == '\'');
             length = (strptr - current) - 1;
             str = (char*) calloc(length + 1, sizeof(char));
             strncpy(str, current + 1, length);
@@ -1108,7 +1146,7 @@ typedef struct binding_struct {
 typedef struct env_struct env;
 
 typedef struct env_struct {
-    void* bindings;
+    linked_list* bindings;
     env* parent;
 } env;
 
@@ -1123,6 +1161,90 @@ typedef struct activation_stack {
     unsigned int top_index;
     act_frame* stack;
 } act_stack;
+
+binding* new_binding() {
+    binding* b = (binding *) malloc(sizeof(binding));
+    b->sym = 0;
+    b->value = 0;
+    return b;
+}
+
+binding* new_binding_2(symbol* sym, lisp_value* val) {
+    binding* b = (binding *) malloc(sizeof(binding));
+    b->sym = sym;
+    b->value = val;
+    return b;
+}
+
+void free_binding(binding* b) {
+    if (b == 0) return;
+    b->sym = 0;
+    b->value = 0;
+    free(b);
+}
+
+void free_binding_alt(void* b) {
+    free_binding((binding*) b);
+}
+
+env* new_env(env* parent) {
+    env* e = (env *) malloc(sizeof(env));
+    e->bindings = create_linked_list();
+    e->parent = parent;
+    return e;
+}
+
+void free_env(env* e) {
+    if (e == 0) return;
+    if (e->bindings != 0) {
+        free_linked_list_2(e->bindings, free_binding_alt);
+        e->bindings = 0;
+    }
+    e->parent = 0;
+    free(e);
+}
+
+void env_bind(env* e, symbol* sym, lisp_value* value) {
+    binding* b = new_binding_2(sym, value);
+    push_onto_linked_list(e->bindings, b);
+}
+
+binding* env_find_binding(env* e, symbol* sym) {
+    linked_list* list = 0;
+    ll_node* node = 0;
+
+    if (e == 0) return 0;
+
+    list = e->bindings;
+
+    if (list->count == 0) return 0;
+
+    for (node = list->head; node != 0; node = node->next)
+        if (node->content != 0)
+            if (((binding *) node->content)->sym == sym)
+                return (binding *) node;
+
+    return (e->parent, sym);
+}
+
+lisp_value* env_get(env* e, symbol* sym) {
+    binding* bind = env_find_binding(e, sym);
+
+    return (bind == 0) ? 0 : bind->value;
+}
+
+lisp_value* env_set(env* e, symbol* sym, lisp_value* value) {
+    if ((e == 0) || (sym == 0)) return 0;
+
+    binding* bind = env_find_binding(e, sym);
+
+    if (bind == 0)
+        sym->value = value;
+    else
+        bind->value = value;
+
+    return value;
+}
 
 // Packages
 
