@@ -5,6 +5,7 @@
 #include "framework.h"
 #include "Arithmatic.h"
 #include "decimal_arithmetic.h"
+#include "Integer.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,9 +48,26 @@ int main()
  
             // testMultiplyDigitVectors();
 
-            test_dv_int();
+            // test_dv_int();
 
             // test_scratch_pad_delta();
+
+            Integer i1("-1234");
+            Integer i2("-10");
+            Integer i3 = i1 + i2;
+
+            cout << "i1=";
+            cout << i1;
+            cout << "\n";
+
+            cout << "i2=";
+            cout << i2;
+            cout << "\n";
+
+            cout << "i1+i2=";
+            cout << i3;
+            cout << "\n";
+            cout << "fin\n";
         }
     }
     else
