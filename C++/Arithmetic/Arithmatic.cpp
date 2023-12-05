@@ -55,6 +55,17 @@ int main()
             Integer i1("-1234");
             Integer i2("-10");
             Integer i3 = i1 + i2;
+            std::int64_t i4 = 2;
+            Integer i5 = i3 + i4;
+            Integer i6 = i1 - i2;
+            Integer i7 = i1 - i1;
+            Integer i8 = i1 + i1;
+            Integer i9(365);
+            Integer i10(2);
+            Integer i11 = i9 * i10;
+            Integer i12(-1);
+            Integer i13 = i9 / i10;
+            Integer i14 = i9 % i10;
 
             cout << "i1=";
             cout << i1;
@@ -67,6 +78,51 @@ int main()
             cout << "i1+i2=";
             cout << i3;
             cout << "\n";
+
+            cout << "i4=";
+            cout << i4;
+            cout << "\n";
+
+            cout << "i3+i4=";
+            cout << i5;
+            cout << "\n";
+
+            cout << "i1-i2=";
+            cout << i6;
+            cout << "\n";
+
+            cout << "i1-i1=";
+            cout << i7;
+            cout << "\n";
+
+            cout << "i1+i1=";
+            cout << i8;
+            cout << "\n";
+
+            cout << "i9=";
+            cout << i9;
+            cout << "\n";
+
+            cout << "i10=";
+            cout << i10;
+            cout << "\n";
+
+            cout << "i9*i10=";
+            cout << i11;
+            cout << "\n";
+
+            cout << "i12=";
+            cout << i12;
+            cout << "\n";
+
+            cout << "i9/i10=";
+            cout << i13;
+            cout << "\n";
+
+            cout << "i9%i10=";
+            cout << i14;
+            cout << "\n";
+
             cout << "fin\n";
         }
     }
