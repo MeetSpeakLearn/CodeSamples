@@ -72,7 +72,7 @@ typedef struct dv_int_and_fct_struct {
     dv_fct* fraction;
 };
 
-dv_int* new_int_from_uint32_t(uint32_t value);
+dv_int* new_int_from_int64_t(int64_t value);
 dv_int* new_int_from_string(const char* digits);
 dv_int* new_int_from_nibbles(nibbles* digits, int digits_count, int sign);
 dv_int* new_int_from_dv_int(dv_int* value);
