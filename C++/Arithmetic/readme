@@ -1,0 +1,19 @@
+// Author: Steve Devoy, December 5, 2023
+// Copyright (c) Steve Devoy
+
+// This is a pet project that I am developing for fun. I began this project December 1, 2023.
+// The goal is to compute arithmetic functions using grade-school "hand computation" methods.
+// Everything is done "long hand". All numbers are represented in base 10. There are no decimal
+// points. Numbers can be of any length, but I've arbitrarily limited them to 1024 digits in length.
+// The limit can be changed by redefining MAX_DIGITS below.
+//
+// The final version will include fractions, math with fractions, etc. Of course, this is much slower
+// than using native binary, but I hope to learn from the exericise. I have some ideas of applications
+// using this technique.
+//
+// This header file and its associated c source file will become the underpinning of a C++ library,
+// where classes are used to represent whole numbers, fractions, whole numbers with fractions,
+// imaginary numbers, and so on.
+//
+// The C++ library will override operators to allow these "grade school" representations to be
+// used in combination of C++'s native numerical representations.
