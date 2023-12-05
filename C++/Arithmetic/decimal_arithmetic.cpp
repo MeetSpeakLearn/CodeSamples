@@ -84,6 +84,14 @@ dv_int* new_int_from_nibbles(nibbles* digits, int digits_count, int sign) {
 	return new_int;
 }
 
+dv_int* new_int_from_dv_int(dv_int* value) {
+	dv_int* new_int = (dv_int*)malloc(sizeof(dv_int));
+	new_int->info = value->info;
+	new_int->count = value->count;
+	new_int->vector = _clone(value->vector, value->count);
+	return new_int;
+}
+
 void free_dv_int(dv_int* dvint) {
 	free(dvint->vector);
 	dvint->count = 0;
@@ -92,13 +100,46 @@ void free_dv_int(dv_int* dvint) {
 	free(dvint);
 }
 
+int dv_int_get_sign(dv_int* op) {
+	if ((op->info & DIGIT_VECTOR_SIGN_MASK) == 0) return 0; else return 1;
+}
+
+void dv_int_set_sign(dv_int* op, int sign) {
+	if (sign == 0) {
+		op->info &= ~DIGIT_VECTOR_SIGN_MASK;
+	}
+	else {
+		op->info |= DIGIT_VECTOR_SIGN_MASK;
+	}
+}
+
 dv_int* dv_int_add(dv_int* op1, dv_int* op2) {
-	digit_vector_scratch_pad* scratch = _new_digit_vector_scratch_pad();
-	_set_digits_from_nibbles(scratch, op1->vector, op1->count);
-	_scratch_pad_add_in(scratch, op2->vector, op2->count);
-	dv_int* result = _scratch_pad_to_dv_int(scratch);
-	_free_digit_vector_scratch_pad(scratch);
-	dv_int_reduce(result);
+	int sign1 = dv_int_get_sign(op1);
+	int sign2 = dv_int_get_sign(op2);
+	dv_int* result = 0;
+
+	if (sign1 == sign2) {
+		digit_vector_scratch_pad* scratch = _new_digit_vector_scratch_pad();
+		_set_digits_from_nibbles(scratch, op1->vector, op1->count);
+		_scratch_pad_add_in(scratch, op2->vector, op2->count);
+		result = _scratch_pad_to_dv_int(scratch);
+		_free_digit_vector_scratch_pad(scratch);
+		dv_int_reduce(result);
+		dv_int_set_sign(result, sign1);
+	}
+	else if (sign2 == 1) {
+		dv_int* negatedOp2 = new_int_from_dv_int(op2);
+		dv_int_set_sign(negatedOp2, 0);
+		result = dv_int_sub(op1, negatedOp2);
+		free_dv_int(negatedOp2);
+	}
+	else {
+		dv_int* negatedOp1 = new_int_from_dv_int(op1);
+		dv_int_set_sign(negatedOp1, 0);
+		result = dv_int_sub(op2, negatedOp1);
+		free_dv_int(negatedOp1);
+	}
+
 	return result;
 }
 
@@ -333,7 +374,7 @@ char* dv_int_to_string(dv_int* dint) {
 		str_ptr = as_string;
 	}
 
-	for (int i = digit_count - 1; i >= 0; i++)
+	for (int i = digit_count - 1; i >= 0; i--)
 		*str_ptr++ = '0' + (char)_get_digit(v, i);
 
 	return as_string;
@@ -700,11 +741,11 @@ void _scratch_pad_delta(digit_vector_scratch_pad* scratch_pad, nibbles* digit_ve
 
 	nibble_vector_to_string(clone, scratch_pad->count, buffer, 1024);
 
-	fprintf(stderr, "\nclone=%s", buffer);
+	// fprintf(stderr, "\nclone=%s", buffer);
 
 	comparison = _compare(clone, scratch_pad->count, digit_vector, digit_count);
 
-	fprintf(stderr, "\ncomparison=%d", comparison);
+	// fprintf(stderr, "\ncomparison=%d", comparison);
 
 	if (comparison < 0) {
 		larger = digit_vector;
