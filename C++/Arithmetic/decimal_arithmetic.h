@@ -75,7 +75,10 @@ typedef struct dv_int_and_fct_struct {
 dv_int* new_int_from_uint32_t(uint32_t value);
 dv_int* new_int_from_string(const char* digits);
 dv_int* new_int_from_nibbles(nibbles* digits, int digits_count, int sign);
+dv_int* new_int_from_dv_int(dv_int* value);
 void free_dv_int(dv_int* dvint);
+int dv_int_get_sign(dv_int* op);
+void dv_int_set_sign(dv_int* op, int sign);
 dv_int* dv_int_add(dv_int* op1, dv_int* op2);
 dv_int* dv_int_sub(dv_int* op1, dv_int* op2);
 dv_int* dv_int_mult(dv_int* op1, dv_int* op2);
