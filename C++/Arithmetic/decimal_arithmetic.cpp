@@ -24,16 +24,25 @@
 #include "pch.h"
 #include "decimal_arithmetic.h"
 
-dv_int* new_int_from_uint32_t(uint32_t value) {
+dv_int* new_int_from_int64_t(int64_t value) {
 	digit_vector_scratch_pad* sp = _new_digit_vector_scratch_pad();
 	int i = 0;
+	int sign = 0;
 
-	while (value != 0) {
-		_sp_set_digit(sp, i++, value % 10);
-		value /= 10;
+	if (value < 0) {
+		sign = 1;
+		value = -value;
 	}
 
+	if (value == 0) _sp_set_digit(sp, i++, 0);
+	else
+		while (value != 0) {
+			_sp_set_digit(sp, i++, value % 10);
+			value /= 10;
+		}
+
 	dv_int* result = _scratch_pad_to_dv_int(sp);
+	dv_int_set_sign(result, sign);
 	_free_digit_vector_scratch_pad(sp);
 
 	return result;
@@ -144,16 +153,40 @@ dv_int* dv_int_add(dv_int* op1, dv_int* op2) {
 }
 
 dv_int* dv_int_sub(dv_int* op1, dv_int* op2) {
+	int sign1 = dv_int_get_sign(op1);
+	int sign2 = dv_int_get_sign(op2);
 	int comparison = _compare(op1->vector, op1->count, op2->vector, op2->count);
 	int sign = (comparison < 0) ? 1 : 0;
 	digit_vector_scratch_pad* sp = _new_digit_vector_scratch_pad();
+	dv_int* result = 0;
 
 	_set_digits_from_nibbles(sp, op1->vector, op1->count);
 	_scratch_pad_delta(sp, op2->vector, op2->count);
 
-	dv_int* result = new_int_from_nibbles(sp->vector, sp->count, sign);
+	if (sign1 = sign2) {
+		if (comparison > 0)
+			result = new_int_from_nibbles(sp->vector, sp->count, sign1);
+		else if (comparison < 0) {
+			result = new_int_from_nibbles(sp->vector, sp->count, (sign1 == 0) ? 1 : 0);
+		}
+		else {
+			result = new_int_from_int64_t(0);
+		}
+	}
+	else if (sign1 == 0) {
+		if (comparison == 0)
+			result = new_int_from_int64_t(0);
+		else
+			result = new_int_from_nibbles(sp->vector, sp->count, 0);
+	}
+	else {
+		if (comparison == 0)
+			result = new_int_from_int64_t(0);
+		else
+			result = new_int_from_nibbles(sp->vector, sp->count, 1);
+	}
 
-	_free_digit_vector_scratch_pad(sp);	
+	_free_digit_vector_scratch_pad(sp);
 
 	return result;
 }
@@ -236,7 +269,7 @@ int are_nibbles_divisable_by_nibbles(nibbles* dividend, int dividend_count, nibb
 }
 
 dv_int* dv_int_div(dv_int* dividend, dv_int* divisor, int provide_remainder, dv_int** remainder_if_requested) {
-	fprintf(stderr, "\ndv_int_div()");
+	int same_signs = dv_int_get_sign(dividend) == dv_int_get_sign(divisor);
 	int dividend_length = dividend->count;
 	nibbles* dividend_vector = dividend->vector;
 
@@ -312,9 +345,10 @@ dv_int* dv_int_div(dv_int* dividend, dv_int* divisor, int provide_remainder, dv_
 	}
 
 	dv_int* result = new_int_from_nibbles(quotient_sp->vector, quotient_sp->count, 0);
+	dv_int_set_sign(result, (same_signs) ? 0 : 1);
 
 	if (provide_remainder) {
-		remainder = new_int_from_uint32_t(difference);
+		remainder = new_int_from_int64_t(difference);
 		*remainder_if_requested = remainder;
 	}
 
