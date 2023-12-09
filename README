@@ -1,3 +1,10 @@
+December 10, 2023
+
+I've added an Android application at MeetSpeakLearn / Android1
+It is private because I intend to retain ownership of the code.
+I've written it in Kotlin using Android Studio.
+If someone has a need to see it, I might grant permission pending an NDA agreement.
+
 November 1, 2023
 
 Having noticed that many prospective clients and/or employers wish to see code samples, I found myself in a dilemma. All of the work I have done over past decades is subject to NDAs. Those NDAs preclude 1) sharing my code without the client or employer's permission and 2) retaining the code beyond the end of the contract or employment. Consequently, I cannot share any of the hundreds of thousands of lines of code I have written for others. I have also tutored hundreds of students in programming and the work we produced together is not exclusively mine. Moreover, putting such code online might have implications for the students have mentored.
