@@ -1,0 +1,64 @@
+<!-- src/app/directory/directory.component.html --> 
+<div>
+    <p>Filters</p>
+    <div>
+        <input type="checkbox" [(ngModel)]="isByYear" (change)="getFiles()"> By Year
+        <label>
+            <input type="checkbox" [(ngModel)]="isByExtension" (change)="getFiles()"> By Extension
+        </label>
+        <label>
+            <input type="checkbox" [(ngModel)]="isByDirector" (change)="getFiles()"> By Director
+        </label>
+    </div>
+    <div id="optionsdiv">
+        @if (isByYear) {
+            <select name="yearSelectText()" (ngModel)="years" (change)="setByYearFilter($event)">
+                @if (filterYear == 0) {
+                    <option [ngValue]="null" onClick="filterYear = '0';" disabled>Any Year</option>
+                } @else {
+                    <option [ngValue]="null" onClick="filterYear = '0';" disabled>Any Year</option>
+                }
+                @for (year of years; track year) {
+                    @if (year == filterYear) {
+                        <option [ngValue]="year" onClick="filterYear = year;" selected>{{year}}</option>
+                    } @else {
+                        <option [ngValue]="year" onClick="filterYear = year;">{{year}}</option>
+                    }
+                }
+            </select>
+        }
+        @if (isByExtension) {
+            <select name="extensionSelectText()" (ngModel)="extensions" (change)="setByExtensionFilter($event)">
+                @if (filterExtension == null) {
+                    <option [ngValue]="null" onClick="filterExtension = null;" disabled>Any Extension</option>
+                } @else {
+                    <option [ngValue]="null" onClick="filterExtension = null;" disabled>Any Extension</option>
+                }
+                @for (extension of extensions; track extension) {
+                    @if (extension == filterExtension) {
+                        <option [ngValue]="extension" onClick="filterExtension = extension;" selected>{{extension}}</option>
+                    } @else {
+                        <option [ngValue]="extension" onClick="filterExtension = extension;">{{extension}}</option>
+                    }
+                }
+            </select>
+        }
+    </div>
+    <p>Files</p>
+    <table class="scrolldown">
+        <tr>
+            <th style="border-bottom:2px solid black">File Name</th>
+            <th style="border-bottom:2px solid black">File Type</th>
+            <th style="border-bottom:2px solid black">Download</th>
+        </tr>
+        <tr *ngFor="let item of filteredData">
+            <td style="border-bottom:1px solid black">{{ item.fullName }}</td>
+            <td style="border-bottom:1px solid black">
+                <div style="width: 30px; height: 30px; background-color: #0a0a23; display: flex; justify-content: center; text-align: center; margin: auto;">
+                    <img src="{{ item.getExtensionIconPath() }}"/>
+                </div>
+            </td>
+            <td style="border-bottom:1px solid black"><button type="button" (click)="item.download()">Download</button></td>
+        </tr>
+    </table>
+</div>

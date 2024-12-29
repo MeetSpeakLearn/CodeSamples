@@ -1,0 +1,12 @@
+<div>
+    <form>
+        @for (field of fields; track field) {
+            <input type="{{field.fieldType}}" id="{{field.dbFieldName}}" name="{{field.dbFieldName}}">
+            <label for="{{field.dbFieldName}}">{{field.displayFieldName}}</label>
+            @if (field.optional == false) {
+                <span>*</span>>
+            }
+            <br>
+        }
+    </form>
+</div>

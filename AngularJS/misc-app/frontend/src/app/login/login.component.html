@@ -1,0 +1,42 @@
+<div>
+    @if (loaded) {
+        <p>Welcome {{fname}}!</p>
+        <input type="button" name="logoutButton" value="Logout" (click)="onLogout($event)">
+    }
+    @else if (error) {
+        <p>Error in authentication.</p>
+        <input type="button" name="logoutButton" value="Try Again" (click)="onLogout($event)">
+    }
+    @else if (accessDenied) {
+        @if (loginAction === "NOTHING") {
+            <p>Username and password do not match.</p>
+            <div>
+                <input type="radio" name="loginAction" value="TryAgain" (change)="onChangeAction($event)"> Try again
+                <label>
+                    <input type="radio" name="loginAction" value="NewAccount" (change)="onChangeAction($event)"> Apply for an Account
+                </label>
+                <label>
+                    <input type="radio" name="loginAction" value="Contact" (change)="onChangeAction($event)"> Contact administrator
+                </label>
+            </div>
+        }
+        @else if (loginAction === "NewAccount") {
+            <p>New Account</p>
+        }
+        @else if (loginAction === "Contact") {
+            <p>Contact</p>
+        }
+    }
+    @else {
+        <h2>Login</h2>
+        <form (ngSubmit)="onSubmit()">
+            <label for="username">Username:&nbsp;</label>
+            <input type="text" id="username" [(ngModel)]="username" name="username" required>
+            <br/> <br/>
+            <label for="password">Password:&nbsp;</label>
+            <input type="password" id="password" [(ngModel)]="password" name="password" required>
+            &nbsp;&nbsp;
+            <button type="submit">Login</button>
+        </form>
+    }
+  </div>

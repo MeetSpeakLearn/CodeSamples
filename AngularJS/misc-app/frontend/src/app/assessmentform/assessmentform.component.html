@@ -1,0 +1,175 @@
+<!-- src/app/assessmentform/assessmentform.component.html --> 
+<div>
+    <form>
+        <table>
+            <tr>
+                <td class="alnright">
+                    <label for="credit_union_name">Credit Union Name:</label>
+                </td>
+                <td>
+                    <div>
+                        <label>{{ creditUnionName }}</label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="address">Address:</label>
+                </td>
+                <td>
+                    <div>
+                        <label>{{ address }}</label>
+                    </div>                    
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="address2">Address2:</label>
+                </td>
+                <td>
+                    <div>
+                        <label>{{ address2 }}</label>
+                    </div>                    
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="ncua_charter_number">NCUA Charter Number:</label>
+                </td>
+                <td>
+                    <label>{{ ncuaCharterNumber }}</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label>Date:</label>
+                </td>
+                <td>
+                    <label>{{ getDateAsString() }}</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="total_shares_and_desposits">Total Shares and Deposits:</label>
+                </td>
+                <td>
+                    <label>$</label>
+                    <input type="number" id="total_shares_and_desposits" name="total_shares_and_desposits" min="1" step="any" value="{{ totalSharesAndDesposits }}" />
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="excess_shares_and_desposits">Excess Shares and Deposits:</label>
+                </td>
+                <td>
+                    <label>$</label>
+                    <input type="number" id="excess_shares_and_desposits" name="excess_shares_and_desposits" min="1" step="any" value="{{ computedExcessSharesAndDesposits() }}" />
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="previous_excess_high">Previous Excess High:</label>
+                </td>
+                <td>
+                    <label>{{ "$" + previousExcessHigh }}</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="increase_in_shares_and_desposits">Increase in Shares and Deposits:</label>
+                </td>
+                <td>
+                    <label>$</label><input type="number" id="increase_in_shares_and_desposits" name="increase_in_shares_and_desposits" min="1" step="any" />
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="ncua_5300_agress">NCUA 5300 Agree:</label>
+                </td>
+                <td>
+                    <fieldset>
+                        <input type="radio" id="ncua_5300_agress_yes" name="ncua_5300_agress_yes" value="yes">
+                        <label for="ncua_5300_agress_yes">Yes</label><br>
+                        <input type="radio" id="ncua_5300_agress_no" name="ncua_5300_agress_no" value="no">
+                        <label for="ncua_5300_agress_no">No</label><br>
+                    </fieldset>
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="ncua_5300_memo">NCUA 5300 Memo:</label>
+                </td>
+                <td>
+                    <input type="text" id="ncua_5300_memo" value="{{ ncua5300Memo }}">
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="risk_standard_compliance">Risk Standard Compliance:</label>
+                </td>
+                <td>
+                    <fieldset>
+                        <input type="radio" id="risk_standard_compliance_yes" name="risk_standard_compliance_yes" value="yes">
+                        <label for="risk_standard_compliance_yes">Yes</label><br>
+                        <input type="radio" id="risk_standard_compliance_no" name="risk_standard_compliance_no" value="no">
+                        <label for="risk_standard_compliance_no">No</label><br>
+                    </fieldset>
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="risk_standard_memo">Risk Standard Memo:</label>
+                </td>
+                <td>
+                    <input type="text" id="risk_standard_memo" value="{{ riskStandardMemo }}">
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="certify">I hereby certify that this report is true and correct to the best of my knowledge and belief:</label>
+                </td>
+                <td>
+                    <fieldset>
+                        <input type="radio" id="certify_yes" name="certify_yes" value="yes">
+                        <label for="certify_yes">Yes</label><br>
+                        <input type="radio" id="certify_no" name="certify_no" value="no">
+                        <label for="certify_no">No</label><br>
+                    </fieldset>
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="submitter">Submitted by:</label>
+                </td>
+                <td>
+                    <input type="text" id="submitter" name="submitter"><br>
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="title_position">Title\Position:</label>
+                </td>
+                <td>
+                    <input type="text" id="title_position" name="title_position"><br>
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="email_address">Email Address:</label>
+                </td>
+                <td>
+                    <input type="email" id="email_address" name="email_address" value="{{ emailAddress }}"><br>
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright">
+                    <label for="date_submitted">Date Submitted:</label>
+                </td>
+                <td>
+                    <input type="date" id="date_submitted" name="date_submitted" value="{{ getDateAsString() }}" ><br>
+                </td>
+            </tr>
+        </table>
+        <button type="submit">Submit</button>
+    </form>
+</div>

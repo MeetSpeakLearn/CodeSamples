@@ -1,0 +1,7 @@
+.alnright { text-align: right; }
+.alnleft { text-align: left; }
+table {
+    border-collapse: separate;
+    border-spacing: 20px 0;
+  }
+td { padding: 10px 0; }

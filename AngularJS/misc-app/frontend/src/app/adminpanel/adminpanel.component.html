@@ -1,0 +1,131 @@
+<!-- src/app/adminpanel/adminpanel.component.html --> 
+<div>
+    <p>Welcome <span style="color:blue">{{ fname }}!</span> (Administrator)</p>
+    <div class="tab">
+        <button class="tablinks" (click)="selectTab($event, 'View')">View</button>
+        <button class="tablinks" (click)="selectTab($event, 'UploadDelete')">Upload or Delete</button>
+        <button class="tablinks" (click)="selectTab($event, 'Distribute')">Distribute</button>
+        <button class="tablinks" (click)="selectTab($event, 'AddNew')">Add New Client</button>
+      </div>
+      
+      <!-- Tab content -->
+      <div id="View" class="tabcontent">
+        <h3>View Folders and Files</h3>
+        <div class="row">
+
+          <div class="column">
+            <h3>Copy Files</h3>
+            <nav>
+              <ul>
+                <li *ngFor="let item of getCopyFiles()">
+                  {{ item }}
+                </li>
+              </ul>
+            </nav>
+          </div>
+
+          <div class="column">
+            <h3>Members</h3>
+            <select name="getSelectedMember()" (ngModel)="getActiveMembers()" (change)="setSelectedMember($event)">
+              @if (selectedMember == '') {
+                  <option [ngValue]="null" onClick="filterYear = '0';" disabled>Unselected</option>
+              } @else {
+                  <option [ngValue]="null" onClick="filterYear = '0';" disabled>Unselected</option>
+              }
+              @for (memberid of getActiveMembers(); track memberid) {
+                  @if (memberid == selectedMember) {
+                      <option [ngValue]="memberid" onClick="selectedMember = memberid;" selected>{{memberid}}</option>
+                  } @else {
+                      <option [ngValue]="memberid" onClick="selectedMember = memberid;">{{memberid}}</option>
+                  }
+              }
+          </select>
+          </div>
+          <div class="column">
+            <h3>Member {{ getSelectedMember() }} Files</h3>
+            <nav>
+              <ul>
+                <li *ngFor="let item of getSelectedMemberDir()">
+                  {{ item }}
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <div id="UploadDelete" class="tabcontent">
+        <h3>Upload or Delete Files</h3>
+        <div class="row">
+
+          <div class="column">
+            <h3>Members</h3>
+            <select name="getSelectedMemberUploads()" (ngModel)="getActiveMembers()" (change)="setSelectedMemberUploads($event)">
+              @for (memberid of getActiveMembers(); track memberid) {
+                  @if (memberid == selectedMemberUploads) {
+                      <option [ngValue]="memberid" onClick="selectedMemberUploads = memberid;" selected>{{memberid}}</option>
+                  } @else {
+                      <option [ngValue]="memberid" onClick="selectedMemberUploads = memberid;">{{memberid}}</option>
+                  }
+              }
+            </select>
+          </div>
+
+          <div class="column">
+            <h3>Member {{ getSelectedMemberUploads() }} Uploaded Files</h3>
+            @if ( hasUploadsDirectory(selectedMemberUploads) ) {
+            <nav>
+              <ul>
+                <li *ngFor="let item of getSelectedMemberUploadsDir()">
+                  {{ item }}
+                </li>
+              </ul>
+            </nav>
+          } @else {
+            <p>This member has no uploads directory.</p>
+            <button (click)="createUploadDirectory($event)">Create upload directory for {{ getSelectedMemberUploads() }}?</button>
+          }
+          </div>
+
+          <div class="column">
+            <h3>Uploads</h3>
+            <form enctype="multipart/form-data">
+              <label for="myfile">Select a file:</label>
+              <input type="file" id="myfile" name="myfile" (change)="onFileSelected($event)">
+              <button (click)="this.uploadSingleFile($event)" type="button" class="btn btn-primary mt-3">Upload</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <div id="Distribute" class="tabcontent">
+        <h3>Distribute Assessments</h3>
+        <div class="row">
+          <div class="column">
+            <h3>Copy Files</h3>
+            <nav>
+              <ul>
+                <li *ngFor="let item of getCopyFiles()">
+                  {{ item }}
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="column">
+            <button (click)="this.distribute($event)" type="button" class="btn btn-primary mt-3">Distribute to Members</button>
+          </div>
+        </div>
+    </div>
+      
+    <div id="AddNew" class="tabcontent">
+      <h3>Add New Client</h3>
+      <div class="row">
+        <div class="column">
+          <h3>Client Info</h3>
+        </div>
+        <div class="column">
+          <button (click)="this.addNew($event)" type="button" class="btn btn-primary mt-3">Add</button>
+        </div>
+      </div>
+  </div>
+</div>
