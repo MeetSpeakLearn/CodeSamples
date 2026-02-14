@@ -1,0 +1,2 @@
+This output goes to the file.
+Another line to the file.
